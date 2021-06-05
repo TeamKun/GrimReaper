@@ -1,0 +1,12 @@
+name: GrimReaper
+version: ${project.version}
+main: net.kunmc.lab.grimreaper.GrimReaper
+api-version: 1.16
+prefix: GrimReaper
+authors: [ POne0301 ]
+description: 視界に特定のプレイヤーが入ったら即死
+website: https://github.com/TeamKun/GrimReaper
+commands:
+  gr-assing:
+    description: test
+    usage: /<command>

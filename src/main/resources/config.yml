@@ -1,0 +1,9 @@
+tick: 10 #処理のスパン(単位:tick)
+
+fov: 90 #FOV(単位:度)
+aspectRatioWide: 16 #アスペクト比 (横)
+aspectRatioHeight: 9 #アスペクト比 (縦)
+farClip: 50 #ファークリップまでの距離
+
+grimReaperNum: 1
+grimReaperUpdateInterval: #600(単位:tick)
