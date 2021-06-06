@@ -11,14 +11,14 @@ import static net.kunmc.lab.grimreaper.gameprocess.GameProcess.isKillTargetPlaye
 
 public class PlayerGameEvent implements Listener {
     /**
-     * ログイン時に爆破モード実行中の場合プレイヤーを爆破対象リストに追加する(途中参加が可能になる)
+     * ログイン時(途中参加が可能になる)
      */
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (!isKillTargetPlayer(event.getPlayer()))
             return;
 
-        GameLogic.instance.onPlayerRestart(event.getPlayer(), Player::teleport);
+        GameLogic.instance.onPlayerRestart(event.getPlayer());
     }
 
     /**
@@ -29,7 +29,7 @@ public class PlayerGameEvent implements Listener {
         if (!isKillTargetPlayer(event.getPlayer()))
             return;
 
-        GameLogic.instance.onPlayerRestart(event.getPlayer(), Player::teleport);
+        GameLogic.instance.onPlayerRestart(event.getPlayer());
     }
 
     /**
@@ -40,6 +40,6 @@ public class PlayerGameEvent implements Listener {
         if (!isKillTargetPlayer(event.getPlayer()))
             return;
 
-        GameLogic.instance.onPlayerRestart(event.getPlayer(), Player::teleport);
+        GameLogic.instance.onPlayerRestart(event.getPlayer());
     }
 }

@@ -22,7 +22,7 @@ public class GameLogic {
     public static final GameLogic instance = new GameLogic();
 
     public void mainLogic() {
-           // kill処理
+        // kill処理
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -41,7 +41,7 @@ public class GameLogic {
             }
         }.runTaskTimer(GrimReaper.getPlugin(), 0L, Config.killProcessTickInterval);
 
-    // 死神更新処理
+        // 死神更新処理
         new BukkitRunnable(){
             @Override
             public void run() {
@@ -54,7 +54,7 @@ public class GameLogic {
                 for (Player gr : GameController.GrimReapers) {
                     Bukkit.broadcastMessage(DecolationConst.RED + gr.getName());
                 }
-                Bukkit.broadcastMessage(DecolationConst.RED + "を見ると即死します");
+                Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死にます");
                 Bukkit.broadcastMessage(DecolationConst.RED + Integer.toString(Config.killProcessTickInterval * 20) + "秒ごとに死神は変わります");
                 Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
 
@@ -62,21 +62,8 @@ public class GameLogic {
         }.runTaskTimer(GrimReaper.getPlugin(), 0L, Config.grimReaperUpdateTickInterval);
     }
 
-    public void onPlayerRestart(Player player, BiConsumer<Player, Location> teleportFunc) {
-        PlayerState state = GameController.players.computeIfAbsent(player.getPlayerProfile().getId(), p -> new PlayerState(player));
-
-        //state.clearTime();
-
-        //if (runningMode == Const.GameLogicMode.MODE_BE_OUT) {
-        //    boolean isSeenByNobody = ModeController.killerList.stream().noneMatch(killer -> shouldBeKilled(killer, player));
-        //    if (isSeenByNobody) {
-        //        ModeController.killerList.stream().findFirst().ifPresent(killer -> {
-        //            RayTraceResult result = killer.rayTraceBlocks(Config.farClip);
-        //            if (result != null)
-        //                teleportFunc.accept(player, result.getHitPosition().toLocation(killer.getWorld()));
-        //        });
-        //    }
-        //}
+    public void onPlayerRestart(Player player) {
+        if (runningMode != GameController.GameMode.MODE_NEUTRAL)
+            GameController.players.computeIfAbsent(player.getPlayerProfile().getId(), p -> new PlayerState(player));
     }
-
 }
