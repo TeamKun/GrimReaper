@@ -9,6 +9,8 @@ public class Config {
 
     // 死亡判定するための設定
     public static int fov; // 視野角
+    public static double aspectRatioWide;
+    public static double aspectRatioHeight;
     public static double aspectRatio;
     public static double farClipDistance; // See: https://logicalbeat.jp/blog/815/
 
@@ -30,7 +32,9 @@ public class Config {
 
         killProcessTickInterval = config.getInt("tick");
         fov = config.getInt("fov");
-        aspectRatio = config.getDouble("aspectRatioWide") / config.getDouble("aspectRatioHeight");
+        aspectRatioWide = config.getDouble("aspectRatioWide");
+        aspectRatioHeight = config.getDouble("aspectRatioHeight");
+        aspectRatio = aspectRatioWide / aspectRatioWide;
         farClipDistance = config.getDouble("farClipDistance");
         grimReaperNum = config.getInt("grimReaperNum");
         grimReaperUpdateTickInterval = config.getInt("grimReaperUpdateTick");
