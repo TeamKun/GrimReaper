@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static net.kunmc.lab.grimreaper.game.GameController.players;
+import static org.bukkit.Bukkit.getLogger;
 
 public class GameProcess implements Listener {
     /**
@@ -38,7 +39,7 @@ public class GameProcess implements Listener {
      * kill判定
      */
     public static boolean shouldBeKilled(Player target, Player grimReaper) {
-        Frustum grimPeaperFrustum = GameController.frustum.clone().getFieldOfView(grimReaper.getEyeLocation());
+        Frustum grimPeaperFrustum = GameController.frustum.clone().getFieldOfView(target.getEyeLocation());
         return grimPeaperFrustum.isInSight(target, grimReaper);
     }
 
@@ -65,6 +66,6 @@ public class GameProcess implements Listener {
                 .filter(GameProcess::isGrimReaperSelectionTargetPlayer)
                 .collect(Collectors.toList());
         Collections.shuffle(grimReapers);
-        GameController.GrimReapers = grimReapers.subList(0, Config.grimReaperNum-1);
+        GameController.GrimReapers = grimReapers.subList(0, Config.grimReaperNum);
     }
 }

@@ -8,21 +8,17 @@ import java.util.*;
 
 public class GameController {
     // 動作中のモード保持
-    public static GameMode runningMode;
+    public static GameMode runningMode = GameMode.MODE_NEUTRAL;
     // 死神の対象保持
     public static List<Player> GrimReapers = new ArrayList<Player>();
     // 視錐台計算オブジェクト
     public static Frustum frustum;
     // ゲーム内で管理するPlayerの状態保持
     public static final Map<UUID, PlayerState> players = new HashMap<>();
-    // ゲーム内の時間を管理
-    public static long gameTimerTick = 0L;
 
     public static void controller(GameMode runningMode) {
         // モードを設定
         GameController.runningMode = runningMode;
-        // タイマー初期化
-        gameTimerTick = 0L;
 
         switch (runningMode) {
             case MODE_ASSIGN:
@@ -49,11 +45,7 @@ public class GameController {
         // TODO: nearPlaneは要調整
         frustum = new Frustum (Config.fov,
                 Config.aspectRatio,
-                '3',
+                1.0,
                 Config.farClipDistance);
-    }
-
-    public static void incrementTimer(long incrementTime) {
-        gameTimerTick += incrementTime;
     }
 }

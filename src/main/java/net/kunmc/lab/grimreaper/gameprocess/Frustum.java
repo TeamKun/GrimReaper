@@ -5,6 +5,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class Frustum {
 
     private Vector leftBottomNear;
@@ -89,6 +91,12 @@ public class Frustum {
 
         /** ターゲットの座標 */
         Vector targetPoint = target.getEyeLocation().toVector();
+        //getLogger().info(targetPoint.toString());
+
+        //getLogger().info(leftBottomFar.toString());
+        //getLogger().info(rightBottomFar.toString());
+
+        checkInSight(targetPoint);
 
         // 視錐体台内外判定
         // 右面の判定
@@ -112,6 +120,7 @@ public class Frustum {
         if (-calcDot(leftTopNear, leftBottomNear, rightBottomNear, targetPoint) < 1) {
             return false;
         }
+        getLogger().info("BBBBB");
         // ファープレーンの判定
         if (calcDot(leftTopFar, leftBottomFar, rightBottomFar, targetPoint) < 1) {
             return false;
@@ -282,5 +291,25 @@ public class Frustum {
         Vector tc = newTarget.subtract(newC);
 
         return tc.dot(normal);
+    }
+
+    /*
+     * 各種情報を出力するメソッド、デバック用
+     */
+
+    private void checkInSight(Vector targetPoint){
+        getLogger().info("====== start ======");
+        getLogger().info(leftBottomNear.toString());
+        getLogger().info(rightBottomNear.toString());
+        getLogger().info(leftTopNear.toString());
+        getLogger().info(rightTopNear.toString());
+
+        getLogger().info(leftBottomFar.toString());
+        getLogger().info(rightBottomFar.toString());
+        getLogger().info(leftTopFar.toString());
+        getLogger().info(rightTopFar.toString());
+
+        getLogger().info(targetPoint.toString());
+        getLogger().info("====== end ======");
     }
 }
