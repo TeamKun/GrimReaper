@@ -19,6 +19,7 @@ public final class GrimReaper extends JavaPlugin {
     public void onEnable() {
         plugin = this;
         getLogger().info(MessageUtil.getStartMessage());
+        Config.loadConfig(false);
 
         // イベントクラス読み込み
         getServer().getPluginManager().registerEvents(new PlayerGameEvent(), this);
@@ -26,13 +27,7 @@ public final class GrimReaper extends JavaPlugin {
         // メインロジック実行
         GameLogic.instance.mainLogic();
 
-        getCommand(CommandConst.COMMAND_ASSIGN_MODE_ON).setExecutor(new CommandController());
-        getCommand(CommandConst.COMMAND_RANDOM_MODE_ON).setExecutor(new CommandController());
-        getCommand(CommandConst.COMMAND_CONFIG).setExecutor(new CommandController());
-        getCommand(CommandConst.COMMAND_CONFIG_RELOAD).setExecutor(new CommandController());
-        getCommand(CommandConst.COMMAND_CONFIG_SET).setExecutor(new CommandController());
-
-        Config.loadConfig(false);
+        getCommand(CommandConst.MAIN_COMMAND).setExecutor(new CommandController());
     }
 
     @Override

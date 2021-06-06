@@ -4,6 +4,7 @@ import net.kunmc.lab.grimreaper.Config;
 import net.kunmc.lab.grimreaper.common.DecolationConst;
 import net.kunmc.lab.grimreaper.common.MessageUtil;
 import net.kunmc.lab.grimreaper.game.GameController;
+import net.kunmc.lab.grimreaper.gameprocess.GameProcess;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.bukkit.Bukkit.getLogger;
+
 public class CommandController implements CommandExecutor, TabCompleter {
 
     @Override
@@ -26,9 +29,8 @@ public class CommandController implements CommandExecutor, TabCompleter {
             completions.add(CommandConst.COMMAND_ASSIGN_MODE_ON);
             completions.add(CommandConst.COMMAND_RANDOM_MODE_ON);
             completions.add(CommandConst.COMMAND_CONFIG);
-            completions.add(CommandConst.COMMAND_CONFIG_RELOAD);
-            completions.add(CommandConst.COMMAND_CONFIG_SET);
-        } else if (args.length > 2 && args[0].equals(CommandConst.COMMAND_ASSIGN_MODE_ON)) {
+            completions.add(CommandConst.COMMAND_MODE_OFF);
+        } else if (args.length > 1 && args[0].equals(CommandConst.COMMAND_ASSIGN_MODE_ON)) {
             completions.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
         } else if (args.length == 2 && args[0].equals(CommandConst.COMMAND_CONFIG_SET)) {
             // TODO: 最終的に設定可能なパラメータを入れる
@@ -39,11 +41,12 @@ public class CommandController implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        String commandName = command.getName();
+        String commandName = args[0];
+        String[] subCommandArgs = Arrays.copyOfRange(args, 1, args.length);
 
         if (commandName.equals(CommandConst.COMMAND_CONFIG)) {
             if (!GameController.runningMode.equals(GameController.GameMode.MODE_NEUTRAL)) {
-                sender.sendMessage(DecolationConst.RED + "gr-offコマンドで実行中のモードを終了してからリロードしてください");
+                sender.sendMessage(DecolationConst.RED + "mode-offコマンドで実行中のモードを終了してからリロードしてください");
             } else {
                 Config.loadConfig(true);
                 sender.sendMessage(DecolationConst.GREEN + "コンフィグファイルをリロードしました");
@@ -58,24 +61,20 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
         switch (commandName) {
             case CommandConst.COMMAND_ASSIGN_MODE_ON:
-                runModeAssign(sender, args);
+                runModeAssign(sender, subCommandArgs);
                 break;
             case CommandConst.COMMAND_RANDOM_MODE_ON:
-                runModeRandom(sender, args);
+                runModeRandom(sender, subCommandArgs);
                 break;
             case CommandConst.COMMAND_MODE_OFF:
                 runModeOff();
                 break;
+            default:
         }
-        return true;
+        return false;
     }
 
     private static void runModeAssign(CommandSender sender, String[] args) {
-        /*
-         * ex1. gr-assing player1
-         * ex2. gr-assing player1 player2
-         */
-
         if (args.length < 1) {
             sender.sendMessage(DecolationConst.RED + MessageUtil.ERROR_MSG_LACK_ARGS);
             return;
@@ -102,11 +101,11 @@ public class CommandController implements CommandExecutor, TabCompleter {
         GameController.controller(GameController.GameMode.MODE_ASSIGN);
 
         Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
-        Bukkit.broadcastMessage(DecolationConst.RED + "死神プラグイン指定モードを開始しました");
+        Bukkit.broadcastMessage(DecolationConst.RED + "死神プラグイン 対象指定モードを開始しました");
         for (String arg : args) {
             Bukkit.broadcastMessage(DecolationConst.RED + arg);
         }
-        Bukkit.broadcastMessage(DecolationConst.RED + "を見ないでください");
+        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると即死します");
         Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
     }
 
@@ -126,22 +125,16 @@ public class CommandController implements CommandExecutor, TabCompleter {
             return;
         }
 
-        GameController.GrimReapers = Arrays.stream(args)
-                .flatMap(arg -> Bukkit.selectEntities(sender, arg).stream())
-                .filter(Player.class::isInstance)
-                .map(Player.class::cast)
-                .collect(Collectors.toList());
-
+        GameProcess.updateGrimReaper();
         GameController.controller(GameController.GameMode.MODE_RANDOM);
 
         Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
-        Bukkit.broadcastMessage(DecolationConst.RED + "死神プラグインランダムモードを開始しました");
-        Bukkit.broadcastMessage(DecolationConst.RED + Config.procInterval + "ごとに死神が変わります");
-        for (String arg : args) {
-            Bukkit.broadcastMessage(DecolationConst.RED + arg);
+        Bukkit.broadcastMessage(DecolationConst.RED + "死神プラグイン ランダムモードを開始しました");
+        for (Player gr : GameController.GrimReapers) {
+            Bukkit.broadcastMessage(DecolationConst.RED + gr.getName());
         }
-        Bukkit.broadcastMessage(DecolationConst.RED + "を見ないでください");
-        Bukkit.broadcastMessage(DecolationConst.RED + Config.procInterval + "ごとに死神は変わります");
+        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると即死します");
+        Bukkit.broadcastMessage(DecolationConst.RED + Integer.toString(Config.killProcessTickInterval * 20) + "秒ごとに死神は変わります");
         Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
     }
 

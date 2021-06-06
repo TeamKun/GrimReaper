@@ -1,14 +1,11 @@
 package net.kunmc.lab.grimreaper;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class Config {
 
-    // 処理判定のスパン
-    public static int procInterval;
+    // 判定処理のスパン
+    public static int killProcessTickInterval;
 
     // 死亡判定するための設定
     public static int fov; // 視野角
@@ -17,7 +14,7 @@ public class Config {
 
     // 死神関連の変数
     public static int grimReaperNum;
-    public static int grimReaperUpdateInterval;
+    public static int grimReaperUpdateTickInterval;
 
     public static void loadConfig(boolean isReload) {
 
@@ -31,11 +28,11 @@ public class Config {
 
         FileConfiguration config = plugin.getConfig();
 
-        procInterval = config.getInt("procInterval");
+        killProcessTickInterval = config.getInt("tick");
         fov = config.getInt("fov");
         aspectRatio = config.getDouble("aspectRatioWide") / config.getDouble("aspectRatioHeight");
         farClipDistance = config.getDouble("farClipDistance");
         grimReaperNum = config.getInt("grimReaperNum");
-        grimReaperUpdateInterval = config.getInt("grimReaperUpdateInterval");
+        grimReaperUpdateTickInterval = config.getInt("grimReaperUpdateTick");
     }
 }
