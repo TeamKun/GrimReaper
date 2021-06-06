@@ -126,6 +126,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
         }
 
         GameProcess.updateGrimReaper();
+
         GameController.controller(GameController.GameMode.MODE_RANDOM);
 
         Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
@@ -134,7 +135,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
             Bukkit.broadcastMessage(DecolationConst.RED + gr.getName());
         }
         Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死にます");
-        Bukkit.broadcastMessage(DecolationConst.RED + Integer.toString(Config.killProcessTickInterval * 20) + "秒ごとに死神は変わります");
+        Bukkit.broadcastMessage(DecolationConst.RED + Integer.toString(Config.grimReaperUpdateTickInterval/20) + "秒ごとに死神は変わります");
         Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
     }
 

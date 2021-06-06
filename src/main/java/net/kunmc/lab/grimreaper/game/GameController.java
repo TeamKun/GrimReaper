@@ -15,6 +15,8 @@ public class GameController {
     public static Frustum frustum;
     // ゲーム内で管理するPlayerの状態保持
     public static final Map<UUID, PlayerState> players = new HashMap<>();
+    // ゲーム内時間
+    public static int timer = 0;
 
     public static void controller(GameMode runningMode) {
         // モードを設定
