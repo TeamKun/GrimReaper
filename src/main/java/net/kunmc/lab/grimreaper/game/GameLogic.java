@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.function.BiConsumer;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static net.kunmc.lab.grimreaper.game.GameController.*;
@@ -25,21 +26,22 @@ public class GameLogic {
         new BukkitRunnable() {
             @Override
             public void run() {
+                if (runningMode == GameController.GameMode.MODE_NEUTRAL) {
+                    return;
+                }
                 int killSecInterval = Config.killProcessTickInterval/20 == 0 ? 1 : Config.killProcessTickInterval/20;
                 int grimReaperUpdateSecInterval = Config.grimReaperUpdateTickInterval/20 == 0 ? 1 : Config.grimReaperUpdateTickInterval/20;
-                if (GameController.timer % killSecInterval == 0){
-                    killPlayers();
-                }
                 if (GameController.timer % grimReaperUpdateSecInterval == 0){
                     updateGrimReaper();
+                }
+                if (GameController.timer % killSecInterval == 0){
+                    killPlayers();
                 }
                 GameController.timer++;
             }
         }.runTaskTimer(GrimReaper.getPlugin(), 0L, 20L);
     }
     private void killPlayers() {
-        if (runningMode == GameController.GameMode.MODE_NEUTRAL)
-            return;
         GameController.GrimReapers.forEach(gr -> {
             Bukkit.getOnlinePlayers().stream()
                     .filter(GameProcess::isKillTargetPlayer)
@@ -58,14 +60,14 @@ public class GameLogic {
             return;
 
         GameProcess.updateGrimReaper();
-        Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
-        Bukkit.broadcastMessage(DecolationConst.RED + "死神が更新されました");
+        Bukkit.broadcastMessage(MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage("死神が更新されました");
         for (Player gr : GameController.GrimReapers) {
             Bukkit.broadcastMessage(DecolationConst.RED + gr.getName());
         }
         Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死にます");
-        Bukkit.broadcastMessage(DecolationConst.RED + Integer.toString(Config.grimReaperUpdateTickInterval / 20) + "秒ごとに死神は変わります");
-        Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage(Integer.toString(Config.grimReaperUpdateTickInterval / 20) + "秒ごとに死神は変わります");
+        Bukkit.broadcastMessage(MessageUtil.MSG_LINE);
     }
 
     public void onPlayerRestart(Player player) {

@@ -33,6 +33,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
         } else if (args.length > 1 && args[0].equals(CommandConst.COMMAND_ASSIGN_MODE_ON)) {
             completions.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
         } else if (args.length == 2 && args[0].equals(CommandConst.COMMAND_CONFIG)) {
+            completions.add(CommandConst.COMMAND_CONFIG_SHOW);
             completions.add(CommandConst.COMMAND_CONFIG_SET);
             completions.add(CommandConst.COMMAND_CONFIG_RELOAD);
         } else if (args.length == 3 && args[1].equals(CommandConst.COMMAND_CONFIG_SET)){
@@ -50,28 +51,31 @@ public class CommandController implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String commandName = args[0];
-        String[] CommandArgs = Arrays.copyOfRange(args, 1, args.length);
+        String[] commandArgs = Arrays.copyOfRange(args, 1, args.length);
 
         if (!(sender instanceof Player)) {
             sender.sendMessage("このコマンドはゲーム内からのみ実行できます");
-            return true;
+            return false;
         }
-
         switch (commandName) {
             case CommandConst.COMMAND_ASSIGN_MODE_ON:
-                runModeAssign(sender, CommandArgs);
+                runModeAssign(sender, commandArgs);
                 break;
             case CommandConst.COMMAND_RANDOM_MODE_ON:
-                runModeRandom(sender, CommandArgs);
+                runModeRandom(sender, commandArgs);
                 break;
             case CommandConst.COMMAND_MODE_OFF:
                 runModeOff();
+                break;
             case CommandConst.COMMAND_CONFIG:
-                runConfig(sender, CommandArgs);
+                runConfig(sender, commandArgs);
                 break;
             default:
+                sender.sendMessage(DecolationConst.RED + "存在しないコマンド");
+                sendUsage(sender);
+
         }
-        return false;
+        return true;
     }
 
     private static void runModeAssign(CommandSender sender, String[] args) {
@@ -100,13 +104,13 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
         GameController.controller(GameController.GameMode.MODE_ASSIGN);
 
-        Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
-        Bukkit.broadcastMessage(DecolationConst.RED + "死神プラグイン 対象指定モードを開始しました");
+        Bukkit.broadcastMessage(DecolationConst.GREEN + MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage(DecolationConst.GREEN + "死神プラグイン 対象指定モードを開始しました");
         for (String arg : args) {
             Bukkit.broadcastMessage(DecolationConst.RED + arg);
         }
         Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死にます");
-        Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage(DecolationConst.GREEN + MessageUtil.MSG_LINE);
     }
 
 
@@ -129,14 +133,14 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
         GameController.controller(GameController.GameMode.MODE_RANDOM);
 
-        Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
-        Bukkit.broadcastMessage(DecolationConst.RED + "死神プラグイン ランダムモードを開始しました");
+        Bukkit.broadcastMessage(MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage("死神プラグイン ランダムモードを開始しました");
         for (Player gr : GameController.GrimReapers) {
             Bukkit.broadcastMessage(DecolationConst.RED + gr.getName());
         }
         Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死にます");
-        Bukkit.broadcastMessage(DecolationConst.RED + Integer.toString(Config.grimReaperUpdateTickInterval/20) + "秒ごとに死神は変わります");
-        Bukkit.broadcastMessage(DecolationConst.RED + MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage(Integer.toString(Config.grimReaperUpdateTickInterval/20) + "秒ごとに死神は変わります");
+        Bukkit.broadcastMessage(MessageUtil.MSG_LINE);
     }
 
     private static void runModeOff() {
@@ -145,17 +149,19 @@ public class CommandController implements CommandExecutor, TabCompleter {
     }
 
     private static void runConfig(CommandSender sender, String[] args) {
-        if (args.length < 1) {
-            sender.sendMessage(String.format("%s%s: %d", DecolationConst.GREEN, CommandConst.COMMAND_CONFIG_KILL_TICK_INTERVAL,Config.killProcessTickInterval));
-            sender.sendMessage(String.format("%s%s: %s", DecolationConst.GREEN, CommandConst.COMMAND_CONFIG_F0V, Config.fov));
-            sender.sendMessage(String.format("%s%s: %.1f", DecolationConst.GREEN, CommandConst.COMMAND_CONFIG_ASPECT_RATIO_WIDE, Config.aspectRatioWide));
-            sender.sendMessage(String.format("%s%s: %.1f", DecolationConst.GREEN, CommandConst.COMMAND_CONFIG_ASPECT_RATIO_HEIGHT, Config.aspectRatioHeight));
-            sender.sendMessage(String.format("%s%s: %.1f", DecolationConst.GREEN, CommandConst.COMMAND_CONFIG_FAR_CLIP_DISTANCE, Config.farClipDistance));
-            sender.sendMessage(String.format("%s%s: %d", DecolationConst.GREEN, CommandConst.COMMAND_CONFIG_GRIM_REAPER_NUM, Config.grimReaperNum));
-            sender.sendMessage(String.format("%s%s: %d", DecolationConst.GREEN, CommandConst.COMMAND_CONFIG_GRIM_REAPER_RANDOM_UODATE_TICK_INTERVAL, Config.grimReaperUpdateTickInterval));
+        if (args.length == 0){
+        }
+        if (args.length == 1 && args[0].equals(CommandConst.COMMAND_CONFIG_SHOW)) {
+            sender.sendMessage(DecolationConst.GREEN + "設定値一覧:");
+            sender.sendMessage(String.format("  %s: %d", CommandConst.COMMAND_CONFIG_KILL_TICK_INTERVAL, Config.killProcessTickInterval));
+            sender.sendMessage(String.format("  %s: %s", CommandConst.COMMAND_CONFIG_F0V, Config.fov));
+            sender.sendMessage(String.format("  %s: %.1f", CommandConst.COMMAND_CONFIG_ASPECT_RATIO_WIDE, Config.aspectRatioWide));
+            sender.sendMessage(String.format("  %s: %.1f", CommandConst.COMMAND_CONFIG_ASPECT_RATIO_HEIGHT, Config.aspectRatioHeight));
+            sender.sendMessage(String.format("  %s: %.1f", CommandConst.COMMAND_CONFIG_FAR_CLIP_DISTANCE, Config.farClipDistance));
+            sender.sendMessage(String.format("  %s: %d", CommandConst.COMMAND_CONFIG_GRIM_REAPER_NUM, Config.grimReaperNum));
+            sender.sendMessage(String.format("  %s: %d", CommandConst.COMMAND_CONFIG_GRIM_REAPER_RANDOM_UODATE_TICK_INTERVAL, Config.grimReaperUpdateTickInterval));
         } else if (args.length == 1 && args[0].equals(CommandConst.COMMAND_CONFIG_RELOAD)) {
-            // TODO: モード終了待たなくてもいいかも
-            getLogger().info("BBBB");
+            // tick系のパラメータの更新など気になるのでmode-off設定入れておく
             if (!GameController.runningMode.equals(GameController.GameMode.MODE_NEUTRAL)) {
                 sender.sendMessage(DecolationConst.RED + "mode-offコマンドで実行中のモードを終了してからリロードしてください");
             } else {
@@ -180,7 +186,16 @@ public class CommandController implements CommandExecutor, TabCompleter {
                     Config.farClipDistance = Double.parseDouble(args[2]);
                     break;
                 case CommandConst.COMMAND_CONFIG_GRIM_REAPER_NUM:
-                    Config.grimReaperNum = Integer.parseInt(args[2]);
+                    int num = Integer.parseInt(args[2]);
+                    long maxGrimReaperNum = Bukkit.getOnlinePlayers().stream()
+                            .filter(GameProcess::isGrimReaperSelectionTargetPlayer).count();
+
+                    if (num > maxGrimReaperNum ){
+                        sender.sendMessage(DecolationConst.RED + "設定値がPlayer人数を超えています");
+                        getLogger().info(Integer.toString(GameController.players.size() + GameController.GrimReapers.size()));
+                        return;
+                    }
+                    Config.grimReaperNum = num;
                     break;
                 case CommandConst.COMMAND_CONFIG_GRIM_REAPER_RANDOM_UODATE_TICK_INTERVAL:
                     Config.grimReaperUpdateTickInterval = Integer.parseInt(args[2]);
@@ -190,6 +205,41 @@ public class CommandController implements CommandExecutor, TabCompleter {
                     return;
             }
             sender.sendMessage(String.format("%s%sの値を%sに更新しました", DecolationConst.GREEN, args[1], args[2]));
+        }else{
+            sendConfigUsage(sender);
+            return;
         }
+    }
+    private static void sendUsage(CommandSender sender) {
+        String usagePrefix = String.format("  /%s ", CommandConst.MAIN_COMMAND);
+        String descPrefix = "    ";
+        sender.sendMessage(DecolationConst.GREEN + "Usage:");
+        sender.sendMessage(String.format("%s%s <player1> <player2> ..."
+                ,usagePrefix, CommandConst.COMMAND_ASSIGN_MODE_ON));
+        sender.sendMessage(String.format("%s指定したplayerを死神にするモード(複数指定可能)", descPrefix));
+        sender.sendMessage(String.format("%s%s"
+                ,usagePrefix, CommandConst.COMMAND_RANDOM_MODE_ON));
+        sender.sendMessage(String.format("%sランダムにplayerを死神にするモード", descPrefix));
+        sender.sendMessage(String.format("%s%s"
+                ,usagePrefix, CommandConst.COMMAND_MODE_OFF));
+        sender.sendMessage(String.format("%s現在動いているモードを停止", descPrefix));
+        sender.sendMessage(String.format("%s%s"
+                ,usagePrefix, CommandConst.COMMAND_CONFIG));
+        sender.sendMessage(String.format("%sConfigのUsageを出力", descPrefix));
+    }
+
+    private static void sendConfigUsage(CommandSender sender) {
+        String usagePrefix = String.format("  /%s %s ", CommandConst.MAIN_COMMAND, CommandConst.COMMAND_CONFIG);
+        String descPrefix = "    ";
+        sender.sendMessage(DecolationConst.GREEN + "Usage:");
+        sender.sendMessage(String.format("%s%s"
+                ,usagePrefix, CommandConst.COMMAND_CONFIG_SHOW));
+        sender.sendMessage(String.format("%sConfigの設定値を表示", descPrefix));
+        sender.sendMessage(String.format("%s%s <name> <value>"
+                ,usagePrefix, CommandConst.COMMAND_CONFIG_SET));
+        sender.sendMessage(String.format("%snameの値をvalueに更新", descPrefix));
+        sender.sendMessage(String.format("%s%s"
+                ,usagePrefix, CommandConst.COMMAND_CONFIG_RELOAD));
+        sender.sendMessage(String.format("%sConfigを初期化", descPrefix));
     }
 }

@@ -66,6 +66,7 @@ public class GameProcess implements Listener {
                 .filter(GameProcess::isGrimReaperSelectionTargetPlayer)
                 .collect(Collectors.toList());
         Collections.shuffle(grimReapers);
+
         GameController.GrimReapers = grimReapers.subList(0, Config.grimReaperNum);
     }
 }

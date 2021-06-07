@@ -24,8 +24,10 @@ public class GameController {
 
         switch (runningMode) {
             case MODE_ASSIGN:
+                GameController.timer=1;
                 GameController.createFrustum();
             case MODE_RANDOM:
+                GameController.timer=1;
                 GameController.createFrustum();
                 break;
             case MODE_NEUTRAL:
