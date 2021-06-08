@@ -6,8 +6,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.UUID;
 
 import static net.kunmc.lab.grimreaper.gameprocess.GameProcess.isKillTargetPlayer;
+import static org.bukkit.Bukkit.getLogger;
 
 public class PlayerGameEvent implements Listener {
     /**
@@ -41,5 +45,15 @@ public class PlayerGameEvent implements Listener {
             return;
 
         GameLogic.instance.onPlayerRestart(event.getPlayer());
+    }
+
+    /**
+     * ログアウト時にPlayer情報を削除しないと情報が残って再ログイン後にバグる
+     */
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerGameQuit(PlayerQuitEvent event) {
+        UUID id = event.getPlayer().getUniqueId();
+        if (GameController.players.containsKey(id))
+            GameController.players.remove(id);
     }
 }
