@@ -50,6 +50,10 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 0){
+            sendUsage(sender);
+            return false;
+        }
         String commandName = args[0];
         String[] commandArgs = Arrays.copyOfRange(args, 1, args.length);
 
@@ -188,7 +192,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
                 case CommandConst.COMMAND_CONFIG_GRIM_REAPER_NUM:
                     int num = Integer.parseInt(args[2]);
                     long maxGrimReaperNum = Bukkit.getOnlinePlayers().stream()
-                            .filter(GameProcess::isGrimReaperSelectionTargetPlayer).count();
+                            .filter(GameProcess::notCreativeOrSpectatorPlayer).count();
 
                     if (num > maxGrimReaperNum ){
                         sender.sendMessage(DecolationConst.RED + "設定値がPlayer人数を超えています");

@@ -14,9 +14,9 @@ public class GameController {
     // 視錐台計算オブジェクト
     public static Frustum frustum;
     // ゲーム内で管理するPlayerの状態保持
-    public static final Map<UUID, PlayerState> players = new HashMap<>();
+    public static final Map<UUID, Player> players = new HashMap<>();
     // ゲーム内時間
-    public static int timer = 0;
+    public static int timer = 1;
 
     public static void controller(GameMode runningMode) {
         // モードを設定
@@ -36,7 +36,7 @@ public class GameController {
         }
     }
 
-    public static enum GameMode {
+    public enum GameMode {
         // ゲーム外の状態
         MODE_NEUTRAL,
         // 死神指定
@@ -46,7 +46,6 @@ public class GameController {
     }
 
     public static void createFrustum() {
-        // TODO: nearPlaneは要調整
         frustum = new Frustum (Config.fov,
                 Config.aspectRatio,
                 1.0,

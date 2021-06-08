@@ -11,6 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -45,8 +47,9 @@ public class GameLogic {
         GameController.GrimReapers.forEach(gr -> {
             Bukkit.getOnlinePlayers().stream()
                     .filter(GameProcess::isKillTargetPlayer)
-                    .map(e -> players.computeIfAbsent(e.getPlayerProfile().getId(), p -> new PlayerState(e)))
+                    .map(e -> players.computeIfAbsent(e.getPlayerProfile().getId(), p -> e))
                     .forEach(p -> {
+                        getLogger().info(p.getLocation().toString());
                         if (GameProcess.shouldBeKilled(p.getPlayer(), gr)) {
                             GameProcess.killPlayer(p.getPlayer());
                         }
@@ -72,6 +75,6 @@ public class GameLogic {
 
     public void onPlayerRestart(Player player) {
         if (runningMode != GameController.GameMode.MODE_NEUTRAL)
-            GameController.players.computeIfAbsent(player.getPlayerProfile().getId(), p -> new PlayerState(player));
+            GameController.players.computeIfAbsent(player.getPlayerProfile().getId(), p -> player);
     }
 }

@@ -96,7 +96,7 @@ public class Frustum {
         //getLogger().info(leftBottomFar.toString());
         //getLogger().info(rightBottomFar.toString());
 
-        checkInSight(targetPoint);
+        //checkInSight(targetPoint);
 
         // 視錐体台内外判定
         // 右面の判定
@@ -299,16 +299,10 @@ public class Frustum {
 
     private void checkInSight(Vector targetPoint){
         getLogger().info("====== start ======");
-        getLogger().info(leftBottomNear.toString());
-        getLogger().info(rightBottomNear.toString());
-        getLogger().info(leftTopNear.toString());
-        getLogger().info(rightTopNear.toString());
-
         getLogger().info(leftBottomFar.toString());
         getLogger().info(rightBottomFar.toString());
         getLogger().info(leftTopFar.toString());
         getLogger().info(rightTopFar.toString());
-
         getLogger().info(targetPoint.toString());
         getLogger().info("====== end ======");
     }
