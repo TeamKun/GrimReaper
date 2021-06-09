@@ -4,6 +4,7 @@ import net.kunmc.lab.grimreaper.Config;
 import net.kunmc.lab.grimreaper.common.DecolationConst;
 import net.kunmc.lab.grimreaper.common.MessageConst;
 import net.kunmc.lab.grimreaper.game.GameController;
+import net.kunmc.lab.grimreaper.game.TaskManager;
 import net.kunmc.lab.grimreaper.gameprocess.GameProcess;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -77,7 +78,6 @@ public class CommandController implements CommandExecutor, TabCompleter {
             default:
                 sender.sendMessage(DecolationConst.RED + "存在しないコマンド");
                 sendUsage(sender);
-
         }
         return true;
     }
@@ -100,28 +100,14 @@ public class CommandController implements CommandExecutor, TabCompleter {
             return;
         }
 
-        GameController.GrimReapers = Arrays.stream(args)
-                .flatMap(arg -> Bukkit.selectEntities(sender, arg).stream())
-                .filter(Player.class::isInstance)
-                .map(Player.class::cast)
-                .collect(Collectors.toList());
-
         GameController.controller(GameController.GameMode.MODE_ASSIGN);
+        TaskManager.runKillGrimReaperTask();
 
-        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
-        Bukkit.broadcastMessage("死神指定モードを開始しました");
-        for (String arg : args) {
-            Bukkit.broadcastMessage(DecolationConst.RED + arg);
-        }
-        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死亡します");
-        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
+        GameProcess.updateGrimReaper(true, GameController.GameMode.MODE_ASSIGN, sender, args);
     }
 
 
     private static void runModeRandom(CommandSender sender, String[] args) {
-        /*
-         * ex1. gr-random
-         */
         ArrayList<Player> onlinePlayers = new ArrayList<Player>(Bukkit.getOnlinePlayers());
         if (onlinePlayers.size() < Config.grimReaperNum){
             sender.sendMessage(DecolationConst.RED + "死神の数をオンラインプレイヤーの数未満にして下さい");
@@ -133,18 +119,10 @@ public class CommandController implements CommandExecutor, TabCompleter {
             return;
         }
 
-        GameProcess.updateGrimReaper();
-
         GameController.controller(GameController.GameMode.MODE_RANDOM);
-
-        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
-        Bukkit.broadcastMessage("ランダムモードを開始しました");
-        for (Player gr : GameController.GrimReapers) {
-            Bukkit.broadcastMessage(DecolationConst.RED + gr.getName());
-        }
-        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死亡します");
-        Bukkit.broadcastMessage(Integer.toString(Config.grimReaperUpdateTickInterval/20) + "秒ごとに死神は変わります");
-        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
+        GameProcess.updateGrimReaper(true, GameController.GameMode.MODE_RANDOM, sender, args);
+        TaskManager.runKillGrimReaperTask();
+        TaskManager.runUpdateGrimReaperTask();
     }
 
     private static void runModeOff() {
@@ -154,6 +132,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
     private static void runConfig(CommandSender sender, String[] args) {
         if (args.length == 0){
+            sendUsage(sender);
         }
         if (args.length == 1 && args[0].equals(CommandConst.COMMAND_CONFIG_SHOW)) {
             sender.sendMessage(DecolationConst.GREEN + "設定値一覧:");
@@ -165,20 +144,15 @@ public class CommandController implements CommandExecutor, TabCompleter {
             sender.sendMessage(String.format("  %s: %d", CommandConst.COMMAND_CONFIG_GRIM_REAPER_NUM, Config.grimReaperNum));
             sender.sendMessage(String.format("  %s: %d", CommandConst.COMMAND_CONFIG_GRIM_REAPER_RANDOM_UODATE_TICK_INTERVAL, Config.grimReaperUpdateTickInterval));
         } else if (args.length == 1 && args[0].equals(CommandConst.COMMAND_CONFIG_RELOAD)) {
-            if (!GameController.runningMode.equals(GameController.GameMode.MODE_NEUTRAL)) {
-                sender.sendMessage(DecolationConst.RED + "mode-offコマンドで実行中のモードを終了してからリロードしてください");
-            } else {
-                Config.loadConfig(true);
-                sender.sendMessage(DecolationConst.GREEN + "コンフィグファイルをリロードしました");
-            }
+            Config.loadConfig(true);
+            sender.sendMessage(DecolationConst.GREEN + "コンフィグファイルをリロードしました");
+            TaskManager.runKillGrimReaperTask();
+            TaskManager.runUpdateGrimReaperTask();
         } else if (args.length == 3 && args[0].equals(CommandConst.COMMAND_CONFIG_SET)) {
-            if (!GameController.runningMode.equals(GameController.GameMode.MODE_NEUTRAL)) {
-                sender.sendMessage(DecolationConst.RED + "mode-offコマンドで実行中のモードを終了してから設定を更新してください");
-                return;
-            }
             switch (args[1]){
                 case CommandConst.COMMAND_CONFIG_KILL_TICK_INTERVAL:
                     Config.killProcessTickInterval = Integer.parseInt(args[2]);
+                    TaskManager.runKillGrimReaperTask();
                     break;
                 case CommandConst.COMMAND_CONFIG_F0V:
                     Config.fov = Integer.parseInt(args[2]);
@@ -199,13 +173,14 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
                     if (num > maxGrimReaperNum ){
                         sender.sendMessage(DecolationConst.RED + "設定値がPlayer人数を超えています");
-                        getLogger().info(Integer.toString(GameController.players.size() + GameController.GrimReapers.size()));
+                        getLogger().info(Integer.toString(GameController.players.size() + GameController.grimReapers.size()));
                         return;
                     }
                     Config.grimReaperNum = num;
                     break;
                 case CommandConst.COMMAND_CONFIG_GRIM_REAPER_RANDOM_UODATE_TICK_INTERVAL:
                     Config.grimReaperUpdateTickInterval = Integer.parseInt(args[2]);
+                    TaskManager.runUpdateGrimReaperTask();
                     break;
                 default:
                     sender.sendMessage(DecolationConst.RED + "存在しないパラメータです");

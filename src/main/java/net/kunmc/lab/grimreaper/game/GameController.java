@@ -9,14 +9,12 @@ import java.util.*;
 public class GameController {
     // 動作中のモード保持
     public static GameMode runningMode = GameMode.MODE_NEUTRAL;
+    // ゲーム内で管理するPlayer保持
+    public static final Map<UUID, Player> players = new HashMap<>();
     // 死神の対象保持
-    public static List<Player> GrimReapers = new ArrayList<Player>();
+    public static List<Player> grimReapers = new ArrayList<Player>();
     // 視錐台計算オブジェクト
     public static Frustum frustum;
-    // ゲーム内で管理するPlayerの状態保持
-    public static final Map<UUID, Player> players = new HashMap<>();
-    // ゲーム内時間
-    public static int timer = 1;
 
     public static void controller(GameMode runningMode) {
         // モードを設定
@@ -24,13 +22,20 @@ public class GameController {
 
         switch (runningMode) {
             case MODE_ASSIGN:
-                GameController.timer=1;
+                players.clear();
+                grimReapers.clear();
                 GameController.createFrustum();
             case MODE_RANDOM:
-                GameController.timer=1;
+                players.clear();
+                grimReapers.clear();
                 GameController.createFrustum();
                 break;
             case MODE_NEUTRAL:
+                for (Player grimReaper : GameController.grimReapers) {
+                    grimReaper.setGlowing(false);
+                }
+                players.clear();
+                grimReapers.clear();
                 frustum = null;
                 break;
         }
