@@ -1,6 +1,6 @@
 package net.kunmc.lab.grimreaper.common;
 
-public class MessageUtil {
+public class MessageConst {
     // System Messages
     public static final String PLUGIN_NAME = "GrimReaperPlugin";
 

@@ -2,7 +2,7 @@ package net.kunmc.lab.grimreaper.command;
 
 import net.kunmc.lab.grimreaper.Config;
 import net.kunmc.lab.grimreaper.common.DecolationConst;
-import net.kunmc.lab.grimreaper.common.MessageUtil;
+import net.kunmc.lab.grimreaper.common.MessageConst;
 import net.kunmc.lab.grimreaper.game.GameController;
 import net.kunmc.lab.grimreaper.gameprocess.GameProcess;
 import org.bukkit.Bukkit;
@@ -84,13 +84,13 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
     private static void runModeAssign(CommandSender sender, String[] args) {
         if (args.length < 1) {
-            sender.sendMessage(DecolationConst.RED + MessageUtil.ERROR_MSG_LACK_ARGS);
+            sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_LACK_ARGS);
             return;
         }
 
         for (String arg : args) {
             if (Bukkit.selectEntities(sender, arg).isEmpty()) {
-                sender.sendMessage(DecolationConst.RED + MessageUtil.ERROR_MSG_PLAYER_NOT_FOUND);
+                sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
                 return;
             }
         }
@@ -108,13 +108,13 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
         GameController.controller(GameController.GameMode.MODE_ASSIGN);
 
-        Bukkit.broadcastMessage(DecolationConst.GREEN + MessageUtil.MSG_LINE);
-        Bukkit.broadcastMessage(DecolationConst.GREEN + "死神プラグイン 対象指定モードを開始しました");
+        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
+        Bukkit.broadcastMessage("対象指定モードを開始しました");
         for (String arg : args) {
             Bukkit.broadcastMessage(DecolationConst.RED + arg);
         }
-        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死にます");
-        Bukkit.broadcastMessage(DecolationConst.GREEN + MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死亡します");
+        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
     }
 
 
@@ -137,14 +137,14 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
         GameController.controller(GameController.GameMode.MODE_RANDOM);
 
-        Bukkit.broadcastMessage(MessageUtil.MSG_LINE);
-        Bukkit.broadcastMessage("死神プラグイン ランダムモードを開始しました");
+        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
+        Bukkit.broadcastMessage("ランダムモードを開始しました");
         for (Player gr : GameController.GrimReapers) {
             Bukkit.broadcastMessage(DecolationConst.RED + gr.getName());
         }
-        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死にます");
+        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死亡します");
         Bukkit.broadcastMessage(Integer.toString(Config.grimReaperUpdateTickInterval/20) + "秒ごとに死神は変わります");
-        Bukkit.broadcastMessage(MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
     }
 
     private static void runModeOff() {
@@ -165,7 +165,6 @@ public class CommandController implements CommandExecutor, TabCompleter {
             sender.sendMessage(String.format("  %s: %d", CommandConst.COMMAND_CONFIG_GRIM_REAPER_NUM, Config.grimReaperNum));
             sender.sendMessage(String.format("  %s: %d", CommandConst.COMMAND_CONFIG_GRIM_REAPER_RANDOM_UODATE_TICK_INTERVAL, Config.grimReaperUpdateTickInterval));
         } else if (args.length == 1 && args[0].equals(CommandConst.COMMAND_CONFIG_RELOAD)) {
-            // tick系のパラメータの更新など気になるのでmode-off設定入れておく
             if (!GameController.runningMode.equals(GameController.GameMode.MODE_NEUTRAL)) {
                 sender.sendMessage(DecolationConst.RED + "mode-offコマンドで実行中のモードを終了してからリロードしてください");
             } else {
@@ -173,6 +172,10 @@ public class CommandController implements CommandExecutor, TabCompleter {
                 sender.sendMessage(DecolationConst.GREEN + "コンフィグファイルをリロードしました");
             }
         } else if (args.length == 3 && args[0].equals(CommandConst.COMMAND_CONFIG_SET)) {
+            if (!GameController.runningMode.equals(GameController.GameMode.MODE_NEUTRAL)) {
+                sender.sendMessage(DecolationConst.RED + "mode-offコマンドで実行中のモードを終了してから設定を更新してください");
+                return;
+            }
             switch (args[1]){
                 case CommandConst.COMMAND_CONFIG_KILL_TICK_INTERVAL:
                     Config.killProcessTickInterval = Integer.parseInt(args[2]);

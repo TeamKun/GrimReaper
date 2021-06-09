@@ -3,19 +3,11 @@ package net.kunmc.lab.grimreaper.game;
 import net.kunmc.lab.grimreaper.Config;
 import net.kunmc.lab.grimreaper.GrimReaper;
 import net.kunmc.lab.grimreaper.common.DecolationConst;
-import net.kunmc.lab.grimreaper.common.MessageUtil;
+import net.kunmc.lab.grimreaper.common.MessageConst;
 import net.kunmc.lab.grimreaper.gameprocess.GameProcess;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
 import static net.kunmc.lab.grimreaper.game.GameController.*;
 import static org.bukkit.Bukkit.getLogger;
@@ -28,11 +20,12 @@ public class GameLogic {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (runningMode == GameController.GameMode.MODE_NEUTRAL) {
+                if (runningMode == GameMode.MODE_NEUTRAL) {
                     return;
                 }
-                int killSecInterval = Config.killProcessTickInterval/20 == 0 ? 1 : Config.killProcessTickInterval/20;
-                int grimReaperUpdateSecInterval = Config.grimReaperUpdateTickInterval/20 == 0 ? 1 : Config.grimReaperUpdateTickInterval/20;
+                // 念のため0で除算しないようにしておく
+                int killSecInterval = Config.killProcessTickInterval == 0 ? 1 : Config.killProcessTickInterval;
+                int grimReaperUpdateSecInterval = Config.grimReaperUpdateTickInterval == 0 ? 1 : Config.grimReaperUpdateTickInterval;
                 if (GameController.timer % grimReaperUpdateSecInterval == 0){
                     updateGrimReaper();
                 }
@@ -41,7 +34,7 @@ public class GameLogic {
                 }
                 GameController.timer++;
             }
-        }.runTaskTimer(GrimReaper.getPlugin(), 0L, 20L);
+        }.runTaskTimer(GrimReaper.getPlugin(), 0, 1);
     }
     private void killPlayers() {
         GameController.GrimReapers.forEach(gr -> {
@@ -63,14 +56,14 @@ public class GameLogic {
             return;
 
         GameProcess.updateGrimReaper();
-        Bukkit.broadcastMessage(MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
         Bukkit.broadcastMessage("死神が更新されました");
         for (Player gr : GameController.GrimReapers) {
             Bukkit.broadcastMessage(DecolationConst.RED + gr.getName());
         }
-        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死にます");
+        Bukkit.broadcastMessage(DecolationConst.RED + "を見ると死亡します");
         Bukkit.broadcastMessage(Integer.toString(Config.grimReaperUpdateTickInterval / 20) + "秒ごとに死神は変わります");
-        Bukkit.broadcastMessage(MessageUtil.MSG_LINE);
+        Bukkit.broadcastMessage(MessageConst.MSG_LINE);
     }
 
     public void onPlayerRestart(Player player) {
