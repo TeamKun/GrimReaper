@@ -64,6 +64,7 @@ public class GameProcess implements Listener {
                 .collect(Collectors.toList());
         Collections.shuffle(grimReapers);
 
-        GameController.GrimReapers = grimReapers.subList(0, Config.grimReaperNum);
+        int subListMax = Math.min(Config.grimReaperNum, grimReapers.size());
+        GameController.GrimReapers = grimReapers.subList(0, subListMax);
     }
 }
