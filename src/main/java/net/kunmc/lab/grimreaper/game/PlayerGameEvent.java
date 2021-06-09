@@ -1,7 +1,6 @@
 package net.kunmc.lab.grimreaper.game;
 
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
@@ -11,7 +10,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.UUID;
 
 import static net.kunmc.lab.grimreaper.gameprocess.GameProcess.isKillTargetPlayer;
-import static org.bukkit.Bukkit.getLogger;
 
 public class PlayerGameEvent implements Listener {
     /**

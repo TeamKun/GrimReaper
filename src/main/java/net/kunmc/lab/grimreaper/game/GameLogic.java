@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static net.kunmc.lab.grimreaper.game.GameController.*;
-import static org.bukkit.Bukkit.getLogger;
 
 public class GameLogic {
     public static final GameLogic instance = new GameLogic();

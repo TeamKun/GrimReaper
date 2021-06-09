@@ -109,7 +109,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
         GameController.controller(GameController.GameMode.MODE_ASSIGN);
 
         Bukkit.broadcastMessage(MessageConst.MSG_LINE);
-        Bukkit.broadcastMessage("対象指定モードを開始しました");
+        Bukkit.broadcastMessage("死神指定モードを開始しました");
         for (String arg : args) {
             Bukkit.broadcastMessage(DecolationConst.RED + arg);
         }

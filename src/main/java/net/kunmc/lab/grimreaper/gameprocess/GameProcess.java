@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.bukkit.Bukkit.getLogger;
-
 public class GameProcess implements Listener {
     /**
      * Game で処理するPlayerのチェック
