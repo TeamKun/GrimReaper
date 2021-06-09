@@ -1,6 +1,6 @@
-tick: 20 #処理のスパン(単位:tick)
+tick: 20 #死亡処理のスパン(単位:tick)
 
-fov: 90 #FOV(単位:度)
+fov: 80 #FOV(単位:度)
 aspectRatioWide: 16 #アスペクト比 (横)
 aspectRatioHeight: 9 #アスペクト比 (縦)
 farClipDistance: 40 #ファークリップまでの距離
