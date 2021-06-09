@@ -113,7 +113,6 @@ public class Frustum {
         if (-calcDot(leftTopNear, leftBottomNear, rightBottomNear, targetPoint) < 1) {
             return false;
         }
-        getLogger().info("BBBBB");
         // ファープレーンの判定
         if (calcDot(leftTopFar, leftBottomFar, rightBottomFar, targetPoint) < 1) {
             return false;

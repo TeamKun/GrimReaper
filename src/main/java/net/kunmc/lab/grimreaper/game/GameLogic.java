@@ -42,7 +42,6 @@ public class GameLogic {
                     .filter(GameProcess::isKillTargetPlayer)
                     .map(e -> players.computeIfAbsent(e.getPlayerProfile().getId(), p -> e))
                     .forEach(p -> {
-                        getLogger().info(p.getLocation().toString());
                         if (GameProcess.shouldBeKilled(p.getPlayer(), gr)) {
                             GameProcess.killPlayer(p.getPlayer());
                         }
