@@ -66,12 +66,7 @@ public class GameProcess implements Listener {
      * @param args
      */
     public static void updateGrimReaper(boolean first_flag, GameController.GameMode mode, CommandSender sender, String[] args) {
-        // 一旦死神の発光を全部取る
-        for (Player grimReaper : GameController.grimReapers) {
-            grimReaper.setGlowing(false);
-        }
-
-        if (mode == GameController.GameMode.MODE_ASSIGN) {
+       if (mode == GameController.GameMode.MODE_ASSIGN) {
             GameController.grimReapers = Arrays.stream(args)
                     .flatMap(arg -> Bukkit.selectEntities(sender, arg).stream())
                     .filter(Player.class::isInstance)
@@ -79,18 +74,13 @@ public class GameProcess implements Listener {
                     .collect(Collectors.toList());
         } else {
             // RANDOM_MODE
-            List<Player> grimReapers = Bukkit.getOnlinePlayers().stream()
+            List<Player> grimReapers = GameController.players.values().stream()
                     .filter(GameProcess::notCreativeOrSpectatorPlayer)
                     .collect(Collectors.toList());
             Collections.shuffle(grimReapers);
 
             int subListMax = Math.min(Config.grimReaperNum, grimReapers.size());
             GameController.grimReapers = grimReapers.subList(0, subListMax);
-        }
-
-        // 死神を発光させる
-        for (Player grimReaper : GameController.grimReapers) {
-            grimReaper.setGlowing(true);
         }
 
         Bukkit.broadcastMessage(MessageConst.MSG_LINE);

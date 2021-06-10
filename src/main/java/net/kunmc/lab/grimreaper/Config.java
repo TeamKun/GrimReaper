@@ -1,7 +1,6 @@
 package net.kunmc.lab.grimreaper;
 
 import net.kunmc.lab.grimreaper.command.CommandConst;
-import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Config {

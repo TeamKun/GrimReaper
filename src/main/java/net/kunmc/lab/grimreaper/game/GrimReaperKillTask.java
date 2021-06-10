@@ -1,6 +1,5 @@
 package net.kunmc.lab.grimreaper.game;
 
-import net.kunmc.lab.grimreaper.common.DecolationConst;
 import net.kunmc.lab.grimreaper.gameprocess.Frustum;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -13,19 +12,22 @@ public class GrimReaperKillTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (GameController.runningMode != GameController.GameMode.MODE_NEUTRAL) {
+        if (GameController.runningMode == GameController.GameMode.MODE_NEUTRAL) {
             return;
         }
         GameController.grimReapers.forEach(gr -> {
-            Bukkit.getOnlinePlayers().stream()
-                    .filter(GrimReaperKillTask::isKillTargetPlayer)
-                    .map(e -> players.computeIfAbsent(e.getPlayerProfile().getId(), p -> e))
-                    .forEach(p -> {
-                        if (shouldBeKilled(p.getPlayer(), gr)) {
-                            killPlayer(p.getPlayer(), gr);
-                        }
-                    });
-        });
+            // 死神の人がログアウト時には処理を飛ばす
+            if (players.values().contains(gr)){
+                players.values().stream()
+                        .filter(GrimReaperKillTask::isKillTargetPlayer)
+                        .map(e -> players.computeIfAbsent(e.getPlayerProfile().getId(), p -> e))
+                        .forEach(p -> {
+                            if (shouldBeKilled(p.getPlayer(), gr)) {
+                                killPlayer(p.getPlayer(), gr);
+                            }
+                        });
+            }
+       });
     }
 
     public static boolean shouldBeKilled(Player target, Player grimReaper) {
