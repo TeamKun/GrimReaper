@@ -12,6 +12,7 @@ public class TaskManager {
 
     /**
      * 死神によるKillタスク
+     *   同時にオンラインプレイヤーの更新も含む
      */
     public static void runKillGrimReaperTask() {
         if (killGrimReaperTask != null) {
@@ -28,12 +29,5 @@ public class TaskManager {
             updateGrimReaperTask.cancel();
         }
         updateGrimReaperTask = new GrimReaperUpdateTask().runTaskTimer(GrimReaper.getPlugin(), 0, Config.grimReaperUpdateTickInterval);
-    }
-
-    /**
-     * 定期的に更新したい処理のタスク(ログインユーザの管理)
-     */
-    public static void frequencyTask() {
-        frequencyTask = new FrequencyTask().runTaskTimer(GrimReaper.getPlugin(), 0, 1);
     }
 }
