@@ -8,7 +8,7 @@ public class TaskManager {
 
     private static BukkitTask killGrimReaperTask;
     private static BukkitTask updateGrimReaperTask;
-    private static BukkitTask everyTimeTask;
+    private static BukkitTask frequencyTask;
 
     /**
      * 死神によるKillタスク
@@ -31,9 +31,9 @@ public class TaskManager {
     }
 
     /**
-     * ゲーム参加しているユーザを更新するタスク
+     * 定期的に更新したい処理のタスク(ログインユーザの管理)
      */
-    public static void everyTimeTask() {
-        everyTimeTask = new EveryTimeTask().runTaskTimer(GrimReaper.getPlugin(), 0, 1);
+    public static void frequencyTask() {
+        frequencyTask = new FrequencyTask().runTaskTimer(GrimReaper.getPlugin(), 0, 1);
     }
 }

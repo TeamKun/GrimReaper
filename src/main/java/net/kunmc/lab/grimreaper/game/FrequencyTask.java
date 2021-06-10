@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 import static net.kunmc.lab.grimreaper.game.GameController.players;
 
 /**
- * 毎Tick実行したいタスク
+ * 高頻度で実行・更新したい処理用タスク
  *   ログイン・ログアウトに関連したユーザ処理
  */
-public class EveryTimeTask extends BukkitRunnable {
+public class FrequencyTask extends BukkitRunnable {
     @Override
     public void run() {
         /*

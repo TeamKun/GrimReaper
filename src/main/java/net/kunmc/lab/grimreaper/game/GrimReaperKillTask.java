@@ -53,6 +53,6 @@ public class GrimReaperKillTask extends BukkitRunnable {
             return;
         }
         player.damage(1000);
-        Bukkit.broadcastMessage(String.format("%sは死神%sに殺された", player.getName(), grimReaper.getName()));
+        Bukkit.broadcastMessage(String.format("%sは死神%sを見て死亡した", player.getName(), grimReaper.getName()));
     }
 }

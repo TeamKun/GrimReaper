@@ -23,7 +23,7 @@ public final class GrimReaper extends JavaPlugin {
         getCommand(CommandConst.MAIN_COMMAND).setExecutor(new CommandController());
 
         // メインロジック実行
-        TaskManager.everyTimeTask();
+        TaskManager.frequencyTask();
     }
 
     @Override
