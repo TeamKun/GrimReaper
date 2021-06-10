@@ -8,7 +8,6 @@ public class TaskManager {
 
     private static BukkitTask killGrimReaperTask;
     private static BukkitTask updateGrimReaperTask;
-    private static BukkitTask frequencyTask;
 
     /**
      * 死神によるKillタスク

@@ -1,4 +1,4 @@
-tick: 10 #死亡処理のスパン(単位:tick)
+tick: 20 #死亡処理のスパン(単位:tick)
 
 fov: 70 #FOV(単位:度)
 aspectRatioWide: 16 #アスペクト比 (横)

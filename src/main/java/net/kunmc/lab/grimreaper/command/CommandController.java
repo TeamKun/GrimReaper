@@ -151,6 +151,11 @@ public class CommandController implements CommandExecutor, TabCompleter {
         } else if (args.length == 3 && args[0].equals(CommandConst.COMMAND_CONFIG_SET)) {
             switch (args[1]){
                 case CommandConst.COMMAND_CONFIG_KILL_TICK_INTERVAL:
+                    int killTickInterval = Integer.parseInt(args[2]);
+                    if (killTickInterval < 10) {
+                        sender.sendMessage(DecolationConst.RED + "tickの値は10以上にしてください");
+                        return;
+                    }
                     Config.killProcessTickInterval = Integer.parseInt(args[2]);
                     TaskManager.runKillGrimReaperTask();
                     break;
@@ -173,7 +178,6 @@ public class CommandController implements CommandExecutor, TabCompleter {
 
                     if (num > maxGrimReaperNum ){
                         sender.sendMessage(DecolationConst.RED + "設定値がPlayer人数を超えています");
-                        getLogger().info(Integer.toString(GameController.players.size() + GameController.grimReapers.size()));
                         return;
                     }
                     Config.grimReaperNum = num;
