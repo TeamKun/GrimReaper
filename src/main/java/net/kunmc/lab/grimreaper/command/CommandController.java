@@ -14,9 +14,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CommandController implements CommandExecutor, TabCompleter {
@@ -31,8 +29,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
             completions.add(CommandConst.COMMAND_MODE_OFF);
             completions = completions.stream().filter(e -> e.startsWith(args[0])).collect(Collectors.toList());
         } else if (args.length > 1 && args[0].equals(CommandConst.COMMAND_ASSIGN_MODE_ON)) {
-            completions.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
-            completions = completions.stream().filter(e -> e.startsWith(args[1])).collect(Collectors.toList());
+            completions.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).filter(e -> e.startsWith(args[args.length-1])).collect(Collectors.toList()));
         } else if (args.length == 2 && args[0].equals(CommandConst.COMMAND_CONFIG)) {
             completions.add(CommandConst.COMMAND_CONFIG_SHOW);
             completions.add(CommandConst.COMMAND_CONFIG_SET);
@@ -85,23 +82,28 @@ public class CommandController implements CommandExecutor, TabCompleter {
     }
 
     private static void runModeAssign(CommandSender sender, String[] args) {
-        if (args.length < 1) {
-            sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_LACK_ARGS);
-            return;
-        }
-
-        for (String arg : args) {
-            if (Bukkit.selectEntities(sender, arg).isEmpty()) {
-                sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
-                return;
-            }
-        }
-
         if (GameController.runningMode.equals(GameController.GameMode.MODE_ASSIGN)) {
             sender.sendMessage("すでに実行中です");
             return;
         }
 
+        if (args.length < 1) {
+            sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_LACK_ARGS);
+            return;
+        }
+
+        // 重複確認用
+        Set set = new HashSet();
+        for (String arg : args) {
+            if (Bukkit.selectEntities(sender, arg).isEmpty()) {
+                sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_PLAYER_NOT_FOUND);
+                return;
+            }
+            if(!set.add(arg)) {
+                sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_DUPLICATE_PLAYER);
+                return;
+            }
+        }
         GameController.controller(GameController.GameMode.MODE_ASSIGN);
         TaskManager.runKillGrimReaperTask();
 
@@ -112,7 +114,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
     private static void runModeRandom(CommandSender sender, String[] args) {
         ArrayList<Player> onlinePlayers = new ArrayList<Player>(Bukkit.getOnlinePlayers());
         if (onlinePlayers.size() < Config.grimReaperNum){
-            sender.sendMessage(DecolationConst.RED + "死神の数をオンラインプレイヤーの数未満にして下さい");
+            sender.sendMessage(DecolationConst.RED + MessageConst.ERROR_MSG_GRIM_REAPER_EXCEED_PLAYER);
             return;
         }
 
