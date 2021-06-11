@@ -19,7 +19,7 @@ public class GameProcess implements Listener {
     public static boolean notCreativeOrSpectatorPlayer(Player player) {
         if (player.getGameMode().equals(GameMode.CREATIVE) || player.getGameMode().equals(GameMode.SPECTATOR))
             return false;
-        return player.isValid();
+        return true;
     }
 
     /**
@@ -30,12 +30,12 @@ public class GameProcess implements Listener {
      * @param args
      */
     public static void updateGrimReaper(boolean first_flag, GameController.GameMode mode, CommandSender sender, String[] args) {
-       if (mode == GameController.GameMode.MODE_ASSIGN) {
-            GameController.grimReapers = Arrays.stream(args)
-                    .flatMap(arg -> Bukkit.selectEntities(sender, arg).stream())
-                    .filter(Player.class::isInstance)
-                    .map(Player.class::cast)
-                    .collect(Collectors.toList());
+        if (mode == GameController.GameMode.MODE_ASSIGN) {
+             GameController.grimReapers = Arrays.stream(args)
+                     .flatMap(arg -> Bukkit.selectEntities(sender, arg).stream())
+                     .filter(Player.class::isInstance)
+                     .map(Player.class::cast)
+                     .collect(Collectors.toList());
         } else {
             // RANDOM_MODE
             List<Player> grimReapers = GameController.players.values().stream()

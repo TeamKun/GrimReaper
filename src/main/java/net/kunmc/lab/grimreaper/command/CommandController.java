@@ -19,8 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.bukkit.Bukkit.getLogger;
-
 public class CommandController implements CommandExecutor, TabCompleter {
 
     @Override
@@ -31,12 +29,15 @@ public class CommandController implements CommandExecutor, TabCompleter {
             completions.add(CommandConst.COMMAND_RANDOM_MODE_ON);
             completions.add(CommandConst.COMMAND_CONFIG);
             completions.add(CommandConst.COMMAND_MODE_OFF);
+            completions = completions.stream().filter(e -> e.startsWith(args[0])).collect(Collectors.toList());
         } else if (args.length > 1 && args[0].equals(CommandConst.COMMAND_ASSIGN_MODE_ON)) {
             completions.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
+            completions = completions.stream().filter(e -> e.startsWith(args[1])).collect(Collectors.toList());
         } else if (args.length == 2 && args[0].equals(CommandConst.COMMAND_CONFIG)) {
             completions.add(CommandConst.COMMAND_CONFIG_SHOW);
             completions.add(CommandConst.COMMAND_CONFIG_SET);
             completions.add(CommandConst.COMMAND_CONFIG_RELOAD);
+            completions = completions.stream().filter(e -> e.startsWith(args[1])).collect(Collectors.toList());
         } else if (args.length == 3 && args[1].equals(CommandConst.COMMAND_CONFIG_SET)){
             completions.add(CommandConst.COMMAND_CONFIG_KILL_TICK_INTERVAL);
             completions.add(CommandConst.COMMAND_CONFIG_F0V);
@@ -45,6 +46,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
             completions.add(CommandConst.COMMAND_CONFIG_FAR_CLIP_DISTANCE);
             completions.add(CommandConst.COMMAND_CONFIG_GRIM_REAPER_NUM);
             completions.add(CommandConst.COMMAND_CONFIG_GRIM_REAPER_RANDOM_UODATE_TICK_INTERVAL);
+            completions = completions.stream().filter(e -> e.startsWith(args[2])).collect(Collectors.toList());
         }
         return completions;
     }

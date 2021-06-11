@@ -58,8 +58,8 @@ public class GrimReaperKillTask extends BukkitRunnable {
 
         // kill処理
         GameController.grimReapers.forEach(gr -> {
-            // 死神の人がログアウト時には処理を飛ばす
-            if (players.values().contains(gr)){
+            // 死神の人がログアウト時 or 死亡時には処理を飛ばす
+            if (players.values().contains(gr) && gr.isValid()){
                 players.values().stream()
                         .filter(GrimReaperKillTask::isKillTargetPlayer)
                         .map(e -> players.computeIfAbsent(e.getPlayerProfile().getId(), p -> e))
