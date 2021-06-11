@@ -23,10 +23,10 @@ public class TaskManager {
     /**
      * 死神更新タスク
      */
-    public static void runUpdateGrimReaperTask() {
+    public static void runUpdateGrimReaperTask(boolean first_flag) {
         if (updateGrimReaperTask != null) {
             updateGrimReaperTask.cancel();
         }
-        updateGrimReaperTask = new GrimReaperUpdateTask().runTaskTimer(GrimReaper.getPlugin(), 0, Config.grimReaperUpdateTickInterval);
+        updateGrimReaperTask = new GrimReaperUpdateTask(first_flag).runTaskTimer(GrimReaper.getPlugin(), 0, Config.grimReaperUpdateTickInterval);
     }
 }

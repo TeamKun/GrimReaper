@@ -120,9 +120,8 @@ public class CommandController implements CommandExecutor, TabCompleter {
         }
 
         GameController.controller(GameController.GameMode.MODE_RANDOM);
-        GameProcess.updateGrimReaper(true, GameController.GameMode.MODE_RANDOM, sender, args);
         TaskManager.runKillGrimReaperTask();
-        TaskManager.runUpdateGrimReaperTask();
+        TaskManager.runUpdateGrimReaperTask(true);
     }
 
     private static void runModeOff() {
@@ -147,7 +146,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
             Config.loadConfig(true);
             sender.sendMessage(DecolationConst.GREEN + "コンフィグファイルをリロードしました");
             TaskManager.runKillGrimReaperTask();
-            TaskManager.runUpdateGrimReaperTask();
+            TaskManager.runUpdateGrimReaperTask(false);
         } else if (args.length == 3 && args[0].equals(CommandConst.COMMAND_CONFIG_SET)) {
             switch (args[1]){
                 case CommandConst.COMMAND_CONFIG_KILL_TICK_INTERVAL:
@@ -184,7 +183,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
                     break;
                 case CommandConst.COMMAND_CONFIG_GRIM_REAPER_RANDOM_UODATE_TICK_INTERVAL:
                     Config.grimReaperUpdateTickInterval = Integer.parseInt(args[2]);
-                    TaskManager.runUpdateGrimReaperTask();
+                    TaskManager.runUpdateGrimReaperTask(false);
                     break;
                 default:
                     sender.sendMessage(DecolationConst.RED + "存在しないパラメータです");
